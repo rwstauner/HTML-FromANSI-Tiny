@@ -5,6 +5,19 @@ use warnings;
 package HTML::FromANSI::Tiny;
 # ABSTRACT: Easily convert command line output to html
 
+=method new
+
+Constructor.
+
+Takes a hash or hash ref of options:
+
+=for :list
+* C<ansi_parser> - An instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
+* C<html_encode> - A code ref that should encode HTML entities; See L</html_encode>.
+* C<join> - A string to join the html; See L</html>.
+
+=cut
+
 sub new {
   my $class = shift;
   my $self = {
@@ -12,10 +25,44 @@ sub new {
   };
 
   require HTML::Entities
-    if !$self->{html_encoder};
+    if !$self->{html_encode};
 
   bless $self, $class;
 }
+
+=method ansi_parser
+
+Returns the L<Parse::ANSIColor::Tiny> instance in use.
+Creates one if necessary.
+
+=cut
+
+sub ansi_parser {
+  my ($self) = @_;
+  $self->{ansi_parser} ||= do {
+    require Parse::ANSIColor::Tiny;
+    Parse::ANSIColor::Tiny->new();
+  };
+}
+
+=method html
+
+  my $html = $hfat->html($text);
+  my @html_tags = $hfat->html($text);
+
+Wraps the provided C<$text> in HTML.
+C<$text> may be a string marked with ANSI escape sequences
+or the array ref output of L<Parse::ANSIColor::Tiny>
+if you already have that.
+
+In scalar context (or if the C<join> option is set)
+returns a single string of the concatenated HTML
+joined by the C<join> string or C<''>.
+
+In list context (when C<join> is not set)
+returns a list of HTML tags.
+
+=cut
 
 sub html {
   my ($self, $text) = @_;
@@ -32,18 +79,31 @@ sub html {
     : @html;
 }
 
-sub ansi_parser {
-  my ($self) = @_;
-  $self->{ansi_parser} ||= do {
-    require Parse::ANSIColor::Tiny;
-    Parse::ANSIColor::Tiny->new();
-  };
-}
+=method html_encode
+
+  my $html = $hfat->html_encode($text);
+
+Encodes the text with HTML character entities.
+so it can be inserted into HTML tags.
+
+This is used internally by L</html> to encode
+the contents of each tag.
+
+By default the C<encode_entities> function of L<HTML::Entities> is used.
+
+You may provide an alternate subroutine (code ref) to the constructor
+as the C<html_encode> parameter in which case that sub will be used instead.
+This allows you to set different options
+or use the html entity encoder provided by your framework:
+
+  my $hfat = HTML::FromANSI::Tiny->new(html_encode => sub { $app->h(shift) });
+
+=cut
 
 sub html_encode {
   my ($self, $text) = @_;
-  return $self->{html_encoder}->($text)
-    if $self->{html_encoder};
+  return $self->{html_encode}->($text)
+    if $self->{html_encode};
   return HTML::Entities::encode_entities($text);
 }
 

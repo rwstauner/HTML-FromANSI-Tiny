@@ -128,6 +128,33 @@ sub html_encode {
   return HTML::Entities::encode_entities($text);
 }
 
+=func html_from_ansi
+
+Function wrapped around L</html>.
+
+=head1 EXPORTS
+
+Everything listed in L</FUNCTIONS> is also available for export upon request.
+
+=cut
+
+our @EXPORT_OK = qw( html_from_ansi );
+sub html_from_ansi { __PACKAGE__->new->html(@_) }
+
+sub import {
+  my $class = shift;
+  return unless @_;
+
+  my $caller = caller;
+  no strict 'refs'; ## no critic (NoStrict)
+
+  foreach my $arg ( @_ ){
+    die "'$arg' is not exported by $class"
+      unless grep { $arg eq $_ } @EXPORT_OK;
+    *{"${caller}::$arg"} = *{"${class}::$arg"}{CODE};
+  }
+}
+
 1;
 
 =head1 SYNOPSIS

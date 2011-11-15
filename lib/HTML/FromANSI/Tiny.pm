@@ -15,7 +15,7 @@ Takes a hash or hash ref of options:
 * C<ansi_parser> - Instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
 * C<join> - String to join the html; See L</html>.
-* C<prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
+* C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
 =cut
@@ -54,13 +54,13 @@ sub ansi_parser {
 
 Wraps the provided C<$text> in HTML
 using C<tag> for the HTML tag name
-and prefixing each attribute with C<prefix>.
+and prefixing each attribute with C<class_prefix>.
 For example:
 
   # defaults:
   qq[<span class="red bold">foo</span>]
 
-  # {tag => 'bar', prefix => 'baz-'}
+  # {tag => 'bar', class_prefix => 'baz-'}
   qq[<bar class="baz-red baz-bold">foo</bar>]
 
 C<$text> may be a string marked with ANSI escape sequences
@@ -81,8 +81,8 @@ sub html {
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
-  my $tag    = defined $self->{tag}    ? $self->{tag}    : 'span';
-  my $prefix = defined $self->{prefix} ? $self->{prefix} : '';
+  my $tag    = defined $self->{tag}          ? $self->{tag}          : 'span';
+  my $prefix = defined $self->{class_prefix} ? $self->{class_prefix} : '';
 
   local $_;
   my @html = map {

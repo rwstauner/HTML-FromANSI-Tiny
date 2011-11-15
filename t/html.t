@@ -18,7 +18,7 @@ eq_or_diff
   q[<span class="">foo</span><span class="red">ba</span><span class="">r</span><span class="bold green">baz</span>],
   'slightly more complex';
 
-$h = new_ok($mod, [ {tag => 'pre', prefix => 'term-'} ]);
+$h = new_ok($mod, [ {tag => 'pre', class_prefix => 'term-'} ]);
 
 eq_or_diff
   scalar $h->html("foo\e[31mba\e[0mr\033[1;32mbaz"),

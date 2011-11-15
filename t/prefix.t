@@ -36,4 +36,11 @@ eq_or_diff
   ['<span class="">foo</span>', '<span class="ansi:red">&amp;</span>', '<span class="ansi:bold ansi:green">b&lt;a&gt;r</span>'],
   'custom prefix';
 
+$h = new_ok($mod, [prefix => '0']);
+
+eq_or_diff
+  [$h->html($text)],
+  ['<span class="">foo</span>', '<span class="0red">&amp;</span>', '<span class="0bold 0green">b&lt;a&gt;r</span>'],
+  'custom false prefix';
+
 done_testing;

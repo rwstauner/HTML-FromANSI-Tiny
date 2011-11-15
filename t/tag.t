@@ -29,4 +29,11 @@ eq_or_diff
   ['<yo:ho class="">foo</yo:ho>', '<yo:ho class="red">&amp;</yo:ho>', '<yo:ho class="bold green">b&lt;a&gt;r</yo:ho>'],
   'custom tag with namespace';
 
+$h = new_ok($mod, [tag => 0]);
+
+eq_or_diff
+  [$h->html($text)],
+  ['<0 class="">foo</0>', '<0 class="red">&amp;</0>', '<0 class="bold green">b&lt;a&gt;r</0>'],
+  'custom tag with namespace';
+
 done_testing;

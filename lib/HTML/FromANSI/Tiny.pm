@@ -16,6 +16,7 @@ Takes a hash or hash ref of options:
 * C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
 * C<join> - String to join the html; See L</html>.
+* C<no_plain_tags> - Boolean for omitting the C<tag> when the text has no style attributes; Defaults to false for consistency.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
 =cut
@@ -86,10 +87,15 @@ sub html {
   local $_;
   my @html = map {
     my ($attr, $text) = @$_;
-    qq[<$tag class="] .
-      join(' ', map { $prefix . $_ } @$attr) . '">' .
-      $self->html_encode($text) .
-    qq[</$tag>]
+    my $h = $self->html_encode($text);
+
+    $self->{no_plain_tags} && !@$attr
+      ? $h
+      : qq[<$tag class="] .
+        join(' ', map { $prefix . $_ } @$attr) . '">' .
+        $h .
+        qq[</$tag>]
+
   } @$text;
 
   return defined($self->{join}) || !wantarray

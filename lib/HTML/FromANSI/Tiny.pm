@@ -15,6 +15,7 @@ Takes a hash or hash ref of options:
 * C<ansi_parser> - An instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
 * C<html_encode> - A code ref that should encode HTML entities; See L</html_encode>.
 * C<join> - A string to join the html; See L</html>.
+* C<tag> - An alternate tag in which to wrap the HTML. Defaults to C<span>.
 
 =cut
 
@@ -69,10 +70,12 @@ sub html {
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
+  my $tag = $self->{tag} || 'span';
+
   local $_;
   my @html = map {
-    '<span class="' .  join(' ', @{ $_->[0] }) . '">' .
-      $self->html_encode($_->[1]) . '</span>'
+    qq[<$tag class="] .  join(' ', @{ $_->[0] }) . '">' .
+      $self->html_encode($_->[1]) . qq[</$tag>]
   } @$text;
 
   return defined($self->{join}) || !wantarray

@@ -26,6 +26,8 @@ sub new {
     @_ == 1 ? %{ $_[0] } : @_,
   };
 
+  require Parse::ANSIColor::Tiny
+    if !$self->{ansi_parser};
   require HTML::Entities
     if !$self->{html_encode};
 
@@ -41,10 +43,7 @@ Creates one if necessary.
 
 sub ansi_parser {
   my ($self) = @_;
-  $self->{ansi_parser} ||= do {
-    require Parse::ANSIColor::Tiny;
-    Parse::ANSIColor::Tiny->new();
-  };
+  return $self->{ansi_parser} ||= Parse::ANSIColor::Tiny->new();
 }
 
 =method html

@@ -99,6 +99,9 @@ or use the html entity encoder provided by your framework:
 
   my $hfat = HTML::FromANSI::Tiny->new(html_encode => sub { $app->h(shift) });
 
+The code ref provided should take the first argument as the text to process
+and return the encoded result.
+
 =cut
 
 sub html_encode {

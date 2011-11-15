@@ -69,6 +69,7 @@ sub html {
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
+  local $_;
   my @html = map {
     '<span class="' .  join(' ', @{ $_->[0] }) . '">' .
       $self->html_encode($_->[1]) . '</span>'

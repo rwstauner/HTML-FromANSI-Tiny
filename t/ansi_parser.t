@@ -5,11 +5,14 @@ use Test::Differences;
 
 my $mod = 'HTML::FromANSI::Tiny';
 my $pmod = 'Parse::ANSIColor::Tiny';
-eval "require $_" or die $@
-  for ($pmod, $mod);
+eval "require $mod" or die $@;
+
+my $h = new_ok($mod, [{}]);
+
+isa_ok $h->ansi_parser, $pmod, "required and instantiated $pmod automatically";
 
 my $p = new_ok($pmod);
-my $h = new_ok($mod, [ansi_parser => $p]);
+   $h = new_ok($mod, [ansi_parser => $p]);
 
 ok $h->ansi_parser == $p, 'provided our own ansi parser';
 

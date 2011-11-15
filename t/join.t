@@ -20,7 +20,7 @@ eq_or_diff
   ['<span class="">foo</span>', '<span class="red">&amp;</span>', '<span class="bold green">b&lt;a&gt;r</span>'],
   'list of tags in list context';
 
-my $h = new_ok($mod, [join => "\n"]);
+$h = new_ok($mod, [join => "\n"]);
 
 eq_or_diff
   scalar $h->html($text),

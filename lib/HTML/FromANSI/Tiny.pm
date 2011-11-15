@@ -13,9 +13,9 @@ Takes a hash or hash ref of options:
 
 =for :list
 * C<ansi_parser> - Instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
+* C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
 * C<join> - String to join the html; See L</html>.
-* C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
 =cut

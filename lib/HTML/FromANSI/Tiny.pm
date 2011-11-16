@@ -5,10 +5,10 @@ use warnings;
 package HTML::FromANSI::Tiny;
 # ABSTRACT: Easily convert command line output to html
 
-our @HTML_COLORS =
+our @HTML_COLORS = map { "#$_" }
 qw(
-  black  maroon  green  olive   navy  purple   teal  silver
-  gray   red     lime   yellow  blue  fuchsia  aqua  white
+  000  f33  2c2  bb0  55c  d3d  0cc  bbb
+  555  f66  6d6  dd6  99f  f6f  6dd  fff
 );
 =method new
 
@@ -65,13 +65,18 @@ or if you want something to start with.
 It produces code like this:
 
   .bold { font-weight: bold; }
-  .red { color: red; }
+  .red { color: #f33; }
 
 It will include the C<class_prefix> if you've set one:
 
   # with {class_prefix => 'term-'}
   .term-bold { font-weight: bold; }
-  .term-red { color: red; }
+  .term-red { color: #f33; }
+
+I tried to choose default colors that are close to traditional
+but also fairly legible on black or white.
+
+Overwrite style to taste.
 
 =cut
 

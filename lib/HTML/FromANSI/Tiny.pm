@@ -29,9 +29,9 @@ Takes a hash or hash ref of options:
 sub new {
   my $class = shift;
   my $self = {
-    tag => 'span',
     class_prefix => '',
     selector_prefix => '',
+    tag => 'span',
     @_ == 1 ? %{ $_[0] } : @_,
   };
 

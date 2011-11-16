@@ -20,7 +20,6 @@ Takes a hash or hash ref of options:
 * C<ansi_parser> - Instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
 * C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
-* C<join> - String to join the html; See L</html>.
 * C<no_plain_tags> - Boolean for omitting the C<tag> when the text has no style attributes; Defaults to false for consistency.
 * C<selector_prefix> - String to prefix each css selector; Blank by default. See L</css>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
@@ -80,6 +79,8 @@ but also fairly legible on black or white.
 
 Overwrite style to taste.
 
+Returns a list of styles or a concatenated string depending on context.
+
 =cut
 
 sub css {
@@ -124,12 +125,9 @@ C<$text> may be a string marked with ANSI escape sequences
 or the array ref output of L<Parse::ANSIColor::Tiny>
 if you already have that.
 
-In scalar context (or if the C<join> option is set)
-returns a single string of the concatenated HTML
-joined by the C<join> string or C<''>.
+In list context returns a list of HTML tags.
 
-In list context (when C<join> is not set)
-returns a list of HTML tags.
+In scalar context returns a single string of concatenated HTML.
 
 =cut
 
@@ -155,9 +153,7 @@ sub html {
 
   } @$text;
 
-  return defined($self->{join}) || !wantarray
-    ? join($self->{join}||'', @html)
-    : @html;
+  return wantarray ? @html : join('', @html);
 }
 
 =method html_encode
@@ -195,12 +191,14 @@ sub html_encode {
 
 Returns the output of L</css> wrapped in a C<< <style> >> tag.
 
+Returns a list or a concatenated string depending on context.
+
 =cut
 
 sub style_tag {
   my ($self) = @_;
   my @style = ('<style type="text/css">', $self->css, '</style>');
-  return wantarray ? @style : join '', @style;
+  return wantarray ? @style : join('', @style);
 }
 
 =func html_from_ansi

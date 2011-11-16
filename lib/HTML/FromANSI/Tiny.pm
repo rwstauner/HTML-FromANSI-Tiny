@@ -5,6 +5,11 @@ use warnings;
 package HTML::FromANSI::Tiny;
 # ABSTRACT: Easily convert command line output to html
 
+our @HTML_COLORS =
+qw(
+  black  maroon  green  olive   navy  purple   teal  silver
+  gray   red     lime   yellow  blue  fuchsia  aqua  white
+);
 =method new
 
 Constructor.
@@ -47,6 +52,49 @@ Creates one if necessary.
 sub ansi_parser {
   my ($self) = @_;
   return $self->{ansi_parser} ||= Parse::ANSIColor::Tiny->new();
+}
+
+=method css
+
+  my $css = $hfat->css();
+
+Returns basic CSS code for inclusion into a C<< <style> >> tag.
+You can use this if you don't want to style everything yourself
+or if you want something to start with.
+
+It produces code like this:
+
+  .bold { font-weight: bold; }
+  .red { color: red; }
+
+It will include the C<class_prefix> if you've set one:
+
+  # with {class_prefix => 'term-'}
+  .term-bold { font-weight: bold; }
+  .term-red { color: red; }
+
+=cut
+
+sub css {
+  my ($self) = @_;
+  my $prefix = '.' . $self->{class_prefix};
+  my $parser = $self->ansi_parser;
+
+  my @css = (
+    "${prefix}bold { font-weight: bold; }",
+    "${prefix}dark { opacity: 0.7; }",
+    "${prefix}underline { text-decoration: underline; }",
+    "${prefix}concealed { visibility: hidden; }",
+  );
+  # TODO: reverse
+  my $i = 0;
+  push @css, map { $prefix . $_ . ' { color: ' . $HTML_COLORS[$i++] . '; }' }
+    $parser->foreground_colors;
+  $i = 0;
+  push @css, map { $prefix . $_ . ' { background-color: ' . $HTML_COLORS[$i++] . '; }' }
+    $parser->background_colors;
+
+  return wantarray ? @css : join('', @css);
 }
 
 =method html
@@ -175,6 +223,8 @@ sub import {
 
   print $h->html($output);
   # prints '<span class="red">foo</span><span class="bold green">bar</span>'
+
+  # don't forget to put $h->css() in a <style> tag somewhere (or make your own)
 
 =head1 DESCRIPTION
 

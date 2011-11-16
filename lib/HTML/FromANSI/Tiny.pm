@@ -24,6 +24,8 @@ Takes a hash or hash ref of options:
 sub new {
   my $class = shift;
   my $self = {
+    tag => 'span',
+    class_prefix => '',
     @_ == 1 ? %{ $_[0] } : @_,
   };
 
@@ -81,8 +83,8 @@ sub html {
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
-  my $tag    = defined $self->{tag}          ? $self->{tag}          : 'span';
-  my $prefix = defined $self->{class_prefix} ? $self->{class_prefix} : '';
+  my $tag    = $self->{tag};
+  my $prefix = $self->{class_prefix};
 
   local $_;
   my @html = map {

@@ -5,7 +5,7 @@ use warnings;
 package HTML::FromANSI::Tiny;
 # ABSTRACT: Easily convert command line output to html
 
-our @HTML_COLORS = map { "#$_" }
+our @COLORS = map { "#$_" }
 qw(
   000  f33  2c2  bb0  55c  d3d  0cc  bbb
   555  f66  6d6  dd6  99f  f6f  6dd  fff
@@ -93,10 +93,10 @@ sub css {
   );
   # TODO: reverse
   my $i = 0;
-  push @css, map { $prefix . $_ . ' { color: ' . $HTML_COLORS[$i++] . '; }' }
+  push @css, map { $prefix . $_ . ' { color: ' . $COLORS[$i++] . '; }' }
     $parser->foreground_colors;
   $i = 0;
-  push @css, map { $prefix . $_ . ' { background-color: ' . $HTML_COLORS[$i++] . '; }' }
+  push @css, map { $prefix . $_ . ' { background-color: ' . $COLORS[$i++] . '; }' }
     $parser->background_colors;
 
   return wantarray ? @css : join('', @css);

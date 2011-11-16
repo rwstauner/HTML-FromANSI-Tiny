@@ -22,6 +22,7 @@ Takes a hash or hash ref of options:
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
 * C<join> - String to join the html; See L</html>.
 * C<no_plain_tags> - Boolean for omitting the C<tag> when the text has no style attributes; Defaults to false for consistency.
+* C<selector_prefix> - String to prefix each css selector; Blank by default. See L</css>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
 =cut
@@ -31,6 +32,7 @@ sub new {
   my $self = {
     tag => 'span',
     class_prefix => '',
+    selector_prefix => '',
     @_ == 1 ? %{ $_[0] } : @_,
   };
 
@@ -82,7 +84,7 @@ Overwrite style to taste.
 
 sub css {
   my ($self) = @_;
-  my $prefix = '.' . $self->{class_prefix};
+  my $prefix = $self->{selector_prefix} . '.' . $self->{class_prefix};
   my $parser = $self->ansi_parser;
 
   my @css = (

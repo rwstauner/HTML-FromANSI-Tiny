@@ -43,7 +43,21 @@ my @og = @rgb;
 
 ok $obg[$_] > $og[$_], 'brighter color' for 0 .. 2;
 
-# TODO: selector_prefix
+# selector_prefix
+my $under = '.underline { text-decoration: underline; }';
+ok find_style(qr/^$under$/), 'underline';
+
+$h = new_ok($mod, [selector_prefix => '#term ']);
+@css = $h->css;
+
+ok!find_style(qr/^$under$/), 'bare selector not found';
+ok find_style(qr/^#term $under$/), 'prefixed underline found';
+
+$h = new_ok($mod, [selector_prefix => 'div:hover .t']);
+@css = $h->css;
+
+ok!find_style(qr/^$under$/), 'bare selector not found';
+ok find_style(qr/^div:hover .t$under$/), 'prefixed underline found (no space)';
 
 done_testing;
 

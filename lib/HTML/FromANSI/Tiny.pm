@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 package HTML::FromANSI::Tiny;
-# ABSTRACT: Easily convert command line output to html
+# ABSTRACT: Easily convert colored command line output to HTML
 
 our @COLORS = map { "#$_" }
 qw(
@@ -171,7 +171,7 @@ By default the C<encode_entities> function of L<HTML::Entities> is used.
 You may provide an alternate subroutine (code ref) to the constructor
 as the C<html_encode> parameter in which case that sub will be used instead.
 This allows you to set different options
-or use the html entity encoder provided by your framework:
+or use the HTML entity encoder provided by your framework:
 
   my $hfat = HTML::FromANSI::Tiny->new(html_encode => sub { $app->h(shift) });
 
@@ -229,6 +229,8 @@ sub import {
 }
 
 1;
+
+=for :stopwords html
 
 =head1 SYNOPSIS
 

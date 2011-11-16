@@ -191,6 +191,18 @@ sub html_encode {
   return HTML::Entities::encode_entities($text);
 }
 
+=method style_tag
+
+Returns the output of L</css> wrapped in a C<< <style> >> tag.
+
+=cut
+
+sub style_tag {
+  my ($self) = @_;
+  my @style = ('<style type="text/css">', $self->css, '</style>');
+  return wantarray ? @style : join '', @style;
+}
+
 =func html_from_ansi
 
 Function wrapped around L</html>.
@@ -228,10 +240,11 @@ sub import {
   # output from some command
   my $output = "\e[31mfoo\033[1;32mbar\033[0m";
 
+  # include the default styles if you don't want to define your own:
+  print $h->style_tag(); # or just $h->css() to insert into your own stylesheet
+
   print $h->html($output);
   # prints '<span class="red">foo</span><span class="bold green">bar</span>'
-
-  # don't forget to put $h->css() in a <style> tag somewhere (or make your own)
 
 =head1 DESCRIPTION
 

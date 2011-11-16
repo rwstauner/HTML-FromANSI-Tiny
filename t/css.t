@@ -11,7 +11,9 @@ my @css = $h->css;
 my @colors = do { no warnings 'once'; @HTML::FromANSI::Tiny::COLORS; };
 
 # (fg + bg) + bold + dark + underline + concealed
-is scalar @css, (@colors * 2) + 1 + 1 + 1 + 1, 'got all styles';
+my $exp_lines = ((@colors * 2) + 1 + 1 + 1 + 1);
+
+is scalar @css, $exp_lines, 'got all styles';
 
 my $color = '[0-9a-fA-F]{3}';
 my @rgb;
@@ -55,6 +57,17 @@ ok find_style(qr/^#term $under$/), 'prefixed underline found';
 
 $h = new_ok($mod, [selector_prefix => 'div:hover .t']);
 @css = $h->css;
+
+ok!find_style(qr/^$under$/), 'bare selector not found';
+ok find_style(qr/^div:hover .t$under$/), 'prefixed underline found (no space)';
+
+# style_tag
+
+my @old_css = @css;
+@css = $h->style_tag;
+is scalar @css, $exp_lines + 2, 'css plus style open/close';
+
+is_deeply \@css, ['<style type="text/css">', @old_css, '</style>'], 'style wraps css';
 
 ok!find_style(qr/^$under$/), 'bare selector not found';
 ok find_style(qr/^div:hover .t$under$/), 'prefixed underline found (no space)';

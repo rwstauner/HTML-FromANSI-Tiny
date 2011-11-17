@@ -24,6 +24,10 @@ Takes a hash or hash ref of options:
 * C<selector_prefix> - String to prefix each css selector; Blank by default. See L</css>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
+For convenience and consistency options to L<Parse::ANSIColor::Tiny/new>
+can be specified directly including
+C<auto_reverse>, C<background>, and C<foreground>.
+
 =cut
 
 sub new {
@@ -52,7 +56,12 @@ Creates one if necessary.
 
 sub ansi_parser {
   my ($self) = @_;
-  return $self->{ansi_parser} ||= Parse::ANSIColor::Tiny->new();
+  return $self->{ansi_parser} ||= do {
+    # hash slice
+    my (@fields, %copy) = qw(auto_reverse foreground background);
+    @copy{ @fields } = @$self{ @fields };
+    Parse::ANSIColor::Tiny->new(%copy);
+  };
 }
 
 =method css
@@ -94,7 +103,7 @@ sub css {
     "${prefix}underline { text-decoration: underline; }",
     "${prefix}concealed { visibility: hidden; }",
   );
-  # TODO: reverse
+
   my $i = 0;
   push @css, map { $prefix . $_ . ' { color: ' . $COLORS[$i++] . '; }' }
     $parser->foreground_colors;

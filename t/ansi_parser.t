@@ -46,4 +46,20 @@ eq_or_diff
   '<span class="foo">foo</span>',
   'faked parser';
 
+# we're violating encapsulation... shhh
+
+$h = new_ok($mod);
+is $h->ansi_parser->{background},   undef, 'option not set on parser';
+is $h->ansi_parser->{foreground},   undef, 'option not set on parser';
+is $h->ansi_parser->{auto_reverse}, undef, 'option not set on parser';
+
+$h = new_ok($mod, [background => 'blue']);
+is $h->ansi_parser->{background}, 'blue', 'passed bg to parser';
+
+$h = new_ok($mod, [background => 'red', foreground => 'yellow', auto_reverse => 1, nonparseropt => 'foo']);
+is $h->ansi_parser->{background},      'red', 'option passed to parser';
+is $h->ansi_parser->{foreground},   'yellow', 'option passed to parser';
+is $h->ansi_parser->{auto_reverse},        1, 'option passed to parser';
+ok !exists($h->ansi_parser->{nonparseropt}), 'only certain options passed';
+
 done_testing;

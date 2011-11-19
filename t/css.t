@@ -45,21 +45,43 @@ my @og = @rgb;
 
 ok $obg[$_] > $og[$_], 'brighter color' for 0 .. 2;
 
-# selector_prefix
-my $under = '.underline { text-decoration: underline; }';
-ok find_style(qr/^$under$/), 'underline';
+my $under = 'underline { text-decoration: underline; }';
 
+# no prefixes
+ok find_style(qr/^\.$under$/), 'underline';
+
+# class_prefix
+$h = new_ok($mod, [class_prefix => 'term-']);
+@css = $h->css;
+
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^\.term-$under$/), 'prefixed underline found';
+
+# selector_prefix
 $h = new_ok($mod, [selector_prefix => '#term ']);
 @css = $h->css;
 
-ok!find_style(qr/^$under$/), 'bare selector not found';
-ok find_style(qr/^#term $under$/), 'prefixed underline found';
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^#term \.$under$/), 'prefixed underline found';
 
 $h = new_ok($mod, [selector_prefix => 'div:hover .t']);
 @css = $h->css;
 
-ok!find_style(qr/^$under$/), 'bare selector not found';
-ok find_style(qr/^div:hover .t$under$/), 'prefixed underline found (no space)';
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^div:hover \.t\.$under$/), 'prefixed underline found (no space)';
+
+# class_prefix and selector_prefix
+$h = new_ok($mod, [class_prefix => 'term-', selector_prefix => '#output ']);
+@css = $h->css;
+
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^#output \.term-$under$/), 'prefixed underline found';
+
+$h = new_ok($mod, [class_prefix => 'tt', selector_prefix => 'div:hover .t']);
+@css = $h->css;
+
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^div:hover \.t\.tt$under$/), 'prefixed underline found (no space)';
 
 # style_tag
 
@@ -69,8 +91,8 @@ is scalar @css, $exp_lines + 2, 'css plus style open/close';
 
 is_deeply \@css, ['<style type="text/css">', @old_css, '</style>'], 'style wraps css';
 
-ok!find_style(qr/^$under$/), 'bare selector not found';
-ok find_style(qr/^div:hover .t$under$/), 'prefixed underline found (no space)';
+ok!find_style(qr/^\.$under$/), 'bare selector not found';
+ok find_style(qr/^div:hover \.t\.tt$under$/), 'prefixed underline found (no space)';
 
 done_testing;
 

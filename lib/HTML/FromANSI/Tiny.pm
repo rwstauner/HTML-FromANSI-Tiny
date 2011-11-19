@@ -77,11 +77,17 @@ It produces code like this:
   .bold { font-weight: bold; }
   .red { color: #f33; }
 
-It will include the C<class_prefix> if you've set one:
+It will include the C<class_prefix> and/or C<selector_prefix>
+if you've set either:
 
-  # with {class_prefix => 'term-'}
+    # with {class_prefix => 'term-'}
   .term-bold { font-weight: bold; }
-  .term-red { color: #f33; }
+
+    # with {selector_prefix => '#output '}
+  #output .bold { font-weight: bold; }
+
+    # with {selector_prefix => '#output ', class_prefix => 'term-'}
+  #output .term-bold { font-weight: bold; }
 
 I tried to choose default colors that are close to traditional
 but also fairly legible on black or white.

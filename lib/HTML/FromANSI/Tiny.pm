@@ -89,12 +89,19 @@ if you've set either:
     # with {selector_prefix => '#output ', class_prefix => 'term-'}
   #output .term-bold { font-weight: bold; }
 
+Returns a list of styles or a concatenated string depending on context.
+
 I tried to choose default colors that are close to traditional
-but also fairly legible on black or white.
+terminal colors but also fairly legible on black or white.
 
 Overwrite style to taste.
 
-Returns a list of styles or a concatenated string depending on context.
+B<Note>: There is no default style for C<reverse>
+as CSS does not provide a simple mechanism for this.
+I suggest you use C<auto_reverse>
+and set C<background> and C<foreground> to appropriate colors
+if you expect to process C<reverse> sequences.
+See L<Parse::ANSIColor::Tiny/process_reverse> for more information.
 
 =cut
 
@@ -250,7 +257,9 @@ sub import {
 =head1 SYNOPSIS
 
   use HTML::FromANSI::Tiny;
-  my $h = HTML::FromANSI::Tiny->new();
+  my $h = HTML::FromANSI::Tiny->new(
+    auto_reverse => 1, background => 'white', foreground => 'black',
+  );
 
   # output from some command
   my $output = "\e[31mfoo\033[1;32mbar\033[0m";

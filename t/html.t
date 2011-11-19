@@ -35,4 +35,18 @@ eq_or_diff
   ['<pre class="">foo</pre>', '<pre class="term-red">ba</pre>', '<pre class="">r</pre>', '<pre class="term-bold term-green">baz</pre>'],
   'slightly more complex in list context';
 
+$h = new_ok($mod, [ {class_prefix => 't_', no_plain_tags => 1} ]);
+
+eq_or_diff
+  scalar $h->html("hey \e[7mLOOK AT THIS"),
+  q[hey <span class="t_reverse">LOOK AT THIS</span>],
+  'no auto_reverse; get "reverse" class';
+
+$h = new_ok($mod, [ {class_prefix => 't_', no_plain_tags => 1, auto_reverse => 1} ]);
+
+eq_or_diff
+  scalar $h->html("hey \e[7mLOOK AT THIS"),
+  q[hey <span class="t_on_white t_black">LOOK AT THIS</span>],
+  'with auto_reverse get default colors';
+
 done_testing;

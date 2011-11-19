@@ -5,13 +5,22 @@ use Plack::Builder;
 
 use lib "lib";
 use HTML::FromANSI::Tiny;
-my $h = HTML::FromANSI::Tiny->new;
+my $w = HTML::FromANSI::Tiny->new(auto_reverse => 1, background => 'white', foreground => 'black');
+my $b = HTML::FromANSI::Tiny->new(auto_reverse => 1, background => 'black', foreground => 'white');
+
+my $ansi = do { local $/; <DATA> };
+
+my $alternate = eval q{
+  use HTML::FromANSI;
+  HTML::FromANSI::ansi2html( $ansi );
+};
 
 my $html =
-  sprintf '<html><head><style>%s</style></head><body><pre>%s</pre><pre style="background: black; color: white;">%s</pre></body></html>',
-    scalar $h->css,
-    map { $_, $_ }
-    scalar $h->html( do { local $/; <DATA> } );
+  sprintf '<html><head><style>%s</style></head><body><pre>%s</pre><pre style="background: black; color: white;">%s</pre><hr/><div>%s</div></body></html>',
+    scalar $w->css,
+    scalar $w->html( $ansi ),
+    scalar $b->html( $ansi ),
+    $alternate;
 
 builder { 
   sub { [ 200, [ "Content-type" => "text/html" ], [ $html ] ]; }
@@ -23,6 +32,7 @@ __DATA__
  4	[04m  4 [01;04m  4 [0m		 5	[05m  5 [01;05m  5 [0m
  6	[06m  6 [01;06m  6 [0m		 7	[07m  7 [01;07m  7 [0m
 30	[30m 30 [01;30m 30 [0m		31	[31m 31 [01;31m 31 [0m
+30	[30m 30 [07;30m 30 [0m		31	[31m 31 [07;31m 31 [0m
 32	[32m 32 [01;32m 32 [0m		33	[33m 33 [01;33m 33 [0m
 34	[34m 34 [01;34m 34 [0m		35	[35m 35 [01;35m 35 [0m
 36	[36m 36 [01;36m 36 [0m		37	[37m 37 [01;37m 37 [0m

@@ -189,6 +189,8 @@ sub html {
 
   my $tag    = $self->{tag};
   my $prefix = $self->{class_prefix};
+  # Preload if needed; Don't load if not.
+  my $styles = $self->{inline_style} ? $self->_css_class_attr : {};
 
   local $_;
   my @html = map {
@@ -197,10 +199,13 @@ sub html {
 
     $self->{no_plain_tags} && !@$attr
       ? $h
-      : qq[<$tag class="] .
-        join(' ', map { $prefix . $_ } @$attr) . '">' .
-        $h .
-        qq[</$tag>]
+      : do {
+        sprintf q[<%s %s="%s">%s</%s>], $tag,
+          ($self->{inline_style}
+            ? (style => join ' ', map { $self->_css_attr_string($styles->{$_}) } @$attr)
+            : (class => join ' ', map { $prefix . $_ } @$attr)
+          ), $h, $tag;
+      }
 
   } @$text;
 

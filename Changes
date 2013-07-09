@@ -2,9 +2,11 @@ Revision history for HTML-FromANSI-Tiny
 
 {{$NEXT}}
 
+0.101     2013-07-09T14:12:55Z
+
   - Add 'inline_style' boolean to enable output using style=""
     instead of class="".
-  - Add 'styles' attribute for overwriting style.
+  - Add 'styles' attribute for customizing styles.
 
 0.100     2011-11-19T18:20:55Z
 

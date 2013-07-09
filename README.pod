@@ -2,9 +2,9 @@
 
 =encoding utf-8
 
-=for :stopwords Randy Stauner ACKNOWLEDGEMENTS html cpan testmatrix url annocpan anno
-bugtracker rt cpants kwalitee diff irc mailto metadata placeholders
-metacpan
+=for :stopwords Randy Stauner ACKNOWLEDGEMENTS inline hashrefs html cpan testmatrix url
+annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata
+placeholders metacpan
 
 =head1 NAME
 
@@ -68,11 +68,19 @@ C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
 
 =item *
 
+C<inline_style> - Boolean to toggle using inline C<style=""> attributes instead of C<class=""> attributes.
+
+=item *
+
 C<no_plain_tags> - Boolean for omitting the C<tag> when the text has no style attributes; Defaults to false for consistency.
 
 =item *
 
 C<selector_prefix> - String to prefix each css selector; Blank by default. See L</css>.
+
+=item *
+
+C<styles> - Tree of hashrefs for customizing style output (for C<< <style> >> tags or C<inline_style>). See L</CUSTOM STYLES>.
 
 =item *
 
@@ -189,6 +197,27 @@ Function wrapped around L</html>.
 =head1 EXPORTS
 
 Everything listed in L</FUNCTIONS> is also available for export upon request.
+
+=head1 CUSTOM STYLES
+
+To override the styles output in the L</style_tag> or L</css> methods
+(or the attributes when C<inline_style> is used)
+pass to the constructor a tree of hashrefs as the C<styles> attribute:
+
+  styles => {
+    underline => {
+      'text-decoration'  => 'underline',
+      'text-shadow'      => '0 2px 2px black',
+    },
+    red => {
+      'color'            => '#f00'
+    },
+    on_bright_green => {
+      'background-color' => '#060',
+    }
+  }
+
+Any styles that are not overridden will get the defaults.
 
 =head1 COMPARISON TO HTML::FromANSI
 

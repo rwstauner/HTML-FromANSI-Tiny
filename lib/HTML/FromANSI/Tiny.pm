@@ -10,6 +10,7 @@ qw(
   000  f33  2c2  bb0  55c  d3d  0cc  bbb
   555  f66  6d6  dd6  99f  f6f  6dd  fff
 );
+
 =method new
 
 Constructor.
@@ -110,21 +111,49 @@ sub css {
   my $prefix = $self->{selector_prefix} . '.' . $self->{class_prefix};
   my $parser = $self->ansi_parser;
 
+  my $styles = $self->_css_class_attr;
+
   my @css = (
-    "${prefix}bold { font-weight: bold; }",
-    "${prefix}dark { opacity: 0.7; }",
-    "${prefix}underline { text-decoration: underline; }",
-    "${prefix}concealed { visibility: hidden; }",
+    map { "${prefix}$_ { " . $self->_css_attr_string($styles->{$_}) . " }" }
+      keys %$styles
   );
 
-  my $i = 0;
-  push @css, map { $prefix . $_ . ' { color: ' . $COLORS[$i++] . '; }' }
-    $parser->foreground_colors;
-  $i = 0;
-  push @css, map { $prefix . $_ . ' { background-color: ' . $COLORS[$i++] . '; }' }
-    $parser->background_colors;
-
   return wantarray ? @css : join('', @css);
+}
+
+sub _css_class_attr {
+  my ($self) = @_;
+  return $self->{_all_styles} ||= do {
+
+    my $parser = $self->ansi_parser;
+    my $styles = {
+      bold      => { 'font-weight'      => 'bold'      },
+      dark      => { 'opacity'          => '0.7'       },
+      underline => { 'text-decoration'  => 'underline' },
+      concealed => { 'visibility'       => 'hidden'    },
+    };
+    {
+      my $i = 0;
+      foreach my $fg ( $parser->foreground_colors ){
+        $styles->{$fg} = { color => $COLORS[$i++] };
+      }
+      $i = 0;
+      foreach my $bg ( $parser->background_colors ){
+        $styles->{$bg} = { 'background-color' => $COLORS[$i++] };
+      }
+    }
+
+    # return
+    +{
+      %$styles,
+      %{ $self->{styles} || {} },
+    };
+  };
+}
+
+sub _css_attr_string {
+  my ($self, $attr) = @_;
+  return join ' ', map { "$_: $attr->{$_};" } keys %$attr;
 }
 
 =method html

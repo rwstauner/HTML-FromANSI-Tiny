@@ -21,8 +21,10 @@ Takes a hash or hash ref of options:
 * C<ansi_parser> - Instance of L<Parse::ANSIColor::Tiny>; One will be created automatically, but you can provide one if you want to configure it.
 * C<class_prefix> - String to prefix class names; Blank by default for brevity. See L</html>.
 * C<html_encode> - Code ref that should encode HTML entities; See L</html_encode>.
+* C<inline_style> - Boolean to toggle using inline C<style=""> attributes instead of C<class=""> attributes.
 * C<no_plain_tags> - Boolean for omitting the C<tag> when the text has no style attributes; Defaults to false for consistency.
 * C<selector_prefix> - String to prefix each css selector; Blank by default. See L</css>.
+* C<styles> - Tree of hashrefs for customizing style output (for C<< <style> >> tags or C<inline_style>). See L</CUSTOM STYLES>.
 * C<tag> - Alternate tag in which to wrap the HTML; Defaults to C<span>.
 
 For convenience and consistency options to L<Parse::ANSIColor::Tiny/new>
@@ -317,6 +319,22 @@ L<Parse::ANSIColor::Tiny> returns a data structure that's easy
 to reformat into any desired output.
 Reformatting to HTML seemed simple and common enough
 to warrant this module as well.
+
+=head1 CUSTOM STYLES
+
+To override the styles output in the L</style> or L</css> method
+(or the attributes when C<inline_style> is used)
+pass to the constructor a tree of hashrefs as the C<styles> attribute:
+
+  styles => {
+    underline => {
+      'border'       => '1px solid #black',
+      'border-width' => '0 0 1px 0',
+    },
+    red => {
+      'color'        => '#f00'
+    },
+  }
 
 =head1 COMPARISON TO HTML::FromANSI
 

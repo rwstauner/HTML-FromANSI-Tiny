@@ -328,13 +328,18 @@ pass to the constructor a tree of hashrefs as the C<styles> attribute:
 
   styles => {
     underline => {
-      'border'       => '1px solid #black',
-      'border-width' => '0 0 1px 0',
+      'text-decoration'  => 'underline',
+      'text-shadow'      => '0 2px 2px black',
     },
     red => {
-      'color'        => '#f00'
+      'color'            => '#f00'
     },
+    on_bright_green => {
+      'background-color' => '#060',
+    }
   }
+
+Any styles that are not overridden will get the defaults.
 
 =head1 COMPARISON TO HTML::FromANSI
 

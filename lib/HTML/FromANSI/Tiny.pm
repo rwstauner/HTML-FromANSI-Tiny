@@ -321,7 +321,7 @@ to warrant this module as well.
 
 =head1 CUSTOM STYLES
 
-To override the styles output in the L</style> or L</css> method
+To override the styles output in the L</style_tag> or L</css> methods
 (or the attributes when C<inline_style> is used)
 pass to the constructor a tree of hashrefs as the C<styles> attribute:
 

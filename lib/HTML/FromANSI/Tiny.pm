@@ -111,7 +111,6 @@ See L<Parse::ANSIColor::Tiny/process_reverse> for more information.
 sub css {
   my ($self) = @_;
   my $prefix = $self->{selector_prefix} . '.' . $self->{class_prefix};
-  my $parser = $self->ansi_parser;
 
   my $styles = $self->_css_class_attr;
 

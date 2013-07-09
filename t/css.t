@@ -94,6 +94,30 @@ is_deeply \@css, ['<style type="text/css">', @old_css, '</style>'], 'style wraps
 ok!find_style(qr/^\.$under$/), 'bare selector not found';
 ok find_style(qr/^div:hover \.t\.tt$under$/), 'prefixed underline found (no space)';
 
+# custom styles
+
+$h = new_ok($mod, [styles => {
+  red => { 'font-style' => 'italic' },
+  underline => { 'color' => 'yellow' },
+}]);
+@css = $h->css;
+
+ok find_style(qr/^\.underline { color: yellow; }/), 'custom underline style';
+ok find_style(qr/^\.red { font-style: italic; }/ ), 'replace color';
+ok!find_style(qr/^\.red { color: #($color); }/   ), 'default color overwritten';
+
+$h = new_ok($mod, [
+  styles => {
+    red => { color => 'crimson' },
+  },
+  class_prefix => 'term-',
+  selector_prefix => '#console ',
+]);
+@css = $h->css;
+
+ok find_style(qr/^#console \.term-red { color: crimson; }/ ), 'replace color';
+ok!find_style(qr/^#console \.term-red { color: #($color); }/   ), 'default color overwritten';
+
 done_testing;
 
 sub find_style {

@@ -116,7 +116,7 @@ sub css {
 
   my @css = (
     map { "${prefix}$_ { " . $self->_css_attr_string($styles->{$_}) . " }" }
-      keys %$styles
+      sort keys %$styles
   );
 
   return wantarray ? @css : join('', @css);

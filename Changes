@@ -2,6 +2,9 @@ Revision history for HTML-FromANSI-Tiny
 
 {{$NEXT}}
 
+  - Sort css entries for consistent output on 5.18+ (to facilitate testing).
+    Thanks Stephen Thirlwall!
+
 0.101     2013-07-09T14:12:55Z
 
   - Add 'inline_style' boolean to enable output using style=""

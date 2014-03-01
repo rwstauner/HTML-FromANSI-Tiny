@@ -185,6 +185,9 @@ In scalar context returns a single string of concatenated HTML.
 
 sub html {
   my ($self, $text) = @_;
+
+  $text = $self->_exclude_cursor_escape_sequences($text);
+
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
@@ -211,6 +214,31 @@ sub html {
   } @$text;
 
   return wantarray ? @html : join('', @html);
+}
+
+sub _exclude_cursor_escape_sequences {
+  my ($self, $text) = @_;
+
+  $text =~ s/\e\[2j//gi; # 2J: clear screen
+
+  # 0K: clear row to the right end from current cursor position
+  # 1K: clear row to the left end from current cursor position
+  # 2K: clear row
+  for my $type (0..2) {
+    $text =~ s/\e\[${type}k//gi;
+  }
+
+  $text =~ s/\e\[\d+?;\d+?h//gi; # %d;%dH: move cursor by lengthwise and crosswise
+
+  # %dA: move cursor to above
+  # %dB: move cursor to below
+  # %dC: move cursor to right
+  # %dD: move cursor to left
+  for my $direction ('a'..'d') {
+    $text =~ s/\e\[\d+?${direction}//gi;
+  }
+
+  return $text;
 }
 
 =method html_encode

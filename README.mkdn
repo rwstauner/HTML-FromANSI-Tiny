@@ -1,0 +1,250 @@
+# NAME
+
+HTML::FromANSI::Tiny - Easily convert colored command line output to HTML
+
+# VERSION
+
+version 0.103
+
+# SYNOPSIS
+
+    use HTML::FromANSI::Tiny;
+    my $h = HTML::FromANSI::Tiny->new(
+      auto_reverse => 1, background => 'white', foreground => 'black',
+    );
+
+    # output from some command
+    my $output = "\e[31mfoo\033[1;32mbar\033[0m";
+
+    # include the default styles if you don't want to define your own:
+    print $h->style_tag(); # or just $h->css() to insert into your own stylesheet
+
+    print $h->html($output);
+    # prints '<span class="red">foo</span><span class="bold green">bar</span>'
+
+# DESCRIPTION
+
+Convert the output from a terminal command that is decorated
+with ANSI escape sequences into customizable HTML
+(with a small amount of code).
+
+This module complements [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+by providing a simple HTML markup around its output.
+
+[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) returns a data structure that's easy
+to reformat into any desired output.
+Reformatting to HTML seemed simple and common enough
+to warrant this module as well.
+
+# METHODS
+
+## new
+
+Constructor.
+
+Takes a hash or hash ref of options:
+
+- `ansi_parser` - Instance of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny); One will be created automatically, but you can provide one if you want to configure it.
+- `class_prefix` - String to prefix class names; Blank by default for brevity. See ["html"](#html).
+- `html_encode` - Code ref that should encode HTML entities; See ["html\_encode"](#html_encode).
+- `inline_style` - Boolean to toggle using inline `style=""` attributes instead of `class=""` attributes.
+- `no_plain_tags` - Boolean for omitting the `tag` when the text has no style attributes; Defaults to false for consistency.
+- `selector_prefix` - String to prefix each css selector; Blank by default. See ["css"](#css).
+- `styles` - Tree of hashrefs for customizing style output (for `<style>` tags or `inline_style`). See ["CUSTOM STYLES"](#custom-styles).
+- `tag` - Alternate tag in which to wrap the HTML; Defaults to `span`.
+
+For convenience and consistency options to ["new" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny#new)
+can be specified directly including
+`auto_reverse`, `background`, `foreground`,
+and `remove_escapes`.
+
+## ansi\_parser
+
+Returns the [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) instance in use.
+Creates one if necessary.
+
+## css
+
+    my $css = $hfat->css();
+
+Returns basic CSS code for inclusion into a `<style>` tag.
+You can use this if you don't want to style everything yourself
+or if you want something to start with.
+
+It produces code like this:
+
+    .bold { font-weight: bold; }
+    .red { color: #f33; }
+
+It will include the `class_prefix` and/or `selector_prefix`
+if you've set either:
+
+      # with {class_prefix => 'term-'}
+    .term-bold { font-weight: bold; }
+
+      # with {selector_prefix => '#output '}
+    #output .bold { font-weight: bold; }
+
+      # with {selector_prefix => '#output ', class_prefix => 'term-'}
+    #output .term-bold { font-weight: bold; }
+
+Returns a list of styles or a concatenated string depending on context.
+
+I tried to choose default colors that are close to traditional
+terminal colors but also fairly legible on black or white.
+
+Overwrite style to taste.
+
+__Note__: There is no default style for `reverse`
+as CSS does not provide a simple mechanism for this.
+I suggest you use `auto_reverse`
+and set `background` and `foreground` to appropriate colors
+if you expect to process `reverse` sequences.
+See ["process\_reverse" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny#process_reverse) for more information.
+
+## html
+
+    my $html = $hfat->html($text);
+    my @html_tags = $hfat->html($text);
+
+Wraps the provided `$text` in HTML
+using `tag` for the HTML tag name
+and prefixing each attribute with `class_prefix`.
+For example:
+
+    # defaults:
+    qq[<span class="red bold">foo</span>]
+
+    # {tag => 'bar', class_prefix => 'baz-'}
+    qq[<bar class="baz-red baz-bold">foo</bar>]
+
+`$text` may be a string marked with ANSI escape sequences
+or the array ref output of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+if you already have that.
+
+In list context returns a list of HTML tags.
+
+In scalar context returns a single string of concatenated HTML.
+
+## html\_encode
+
+    my $html = $hfat->html_encode($text);
+
+Encodes the text with HTML character entities.
+so it can be inserted into HTML tags.
+
+This is used internally by ["html"](#html) to encode
+the contents of each tag.
+
+By default the `encode_entities` function of [HTML::Entities](https://metacpan.org/pod/HTML::Entities) is used.
+
+You may provide an alternate subroutine (code ref) to the constructor
+as the `html_encode` parameter in which case that sub will be used instead.
+This allows you to set different options
+or use the HTML entity encoder provided by your framework:
+
+    my $hfat = HTML::FromANSI::Tiny->new(html_encode => sub { $app->h(shift) });
+
+The code ref provided should take the first argument as the text to process
+and return the encoded result.
+
+## style\_tag
+
+Returns the output of ["css"](#css) wrapped in a `<style>` tag.
+
+Returns a list or a concatenated string depending on context.
+
+# FUNCTIONS
+
+## html\_from\_ansi
+
+Function wrapped around ["html"](#html).
+
+# EXPORTS
+
+Everything listed in ["FUNCTIONS"](#functions) is also available for export upon request.
+
+# CUSTOM STYLES
+
+To override the styles output in the ["style\_tag"](#style_tag) or ["css"](#css) methods
+(or the attributes when `inline_style` is used)
+pass to the constructor a tree of hashrefs as the `styles` attribute:
+
+    styles => {
+      underline => {
+        'text-decoration'  => 'underline',
+        'text-shadow'      => '0 2px 2px black',
+      },
+      red => {
+        'color'            => '#f00'
+      },
+      on_bright_green => {
+        'background-color' => '#060',
+      }
+    }
+
+Any styles that are not overridden will get the defaults.
+
+# COMPARISON TO HTML::FromANSI
+
+[HTML::FromANSI](https://metacpan.org/pod/HTML::FromANSI) is a bit antiquated (as of v2.03 released in 2007).
+It uses `font` tags and the `style` attribute
+and isn't very customizable.
+
+It uses [Term::VT102](https://metacpan.org/pod/Term::VT102) which is probably more robust than
+[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) but may be overkill for simple situations.
+I've also had trouble installing it in the past.
+
+For many simple situations this module combined with [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+is likely sufficient and is considerably smaller.
+
+# SEE ALSO
+
+- [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+- [HTML::FromANSI](https://metacpan.org/pod/HTML::FromANSI)
+
+# SUPPORT
+
+## Perldoc
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc HTML::FromANSI::Tiny
+
+## Websites
+
+The following websites have more information about this module, and may be of help to you. As always,
+in addition to those websites please use your favorite search engine to discover more resources.
+
+- MetaCPAN
+
+    A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+    [http://metacpan.org/release/HTML-FromANSI-Tiny](http://metacpan.org/release/HTML-FromANSI-Tiny)
+
+## Bugs / Feature Requests
+
+Please report any bugs or feature requests by email to `bug-html-fromansi-tiny at rt.cpan.org`, or through
+the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=HTML-FromANSI-Tiny](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=HTML-FromANSI-Tiny). You will be automatically notified of any
+progress on the request by the system.
+
+## Source Code
+
+[https://github.com/rwstauner/HTML-FromANSI-Tiny](https://github.com/rwstauner/HTML-FromANSI-Tiny)
+
+    git clone https://github.com/rwstauner/HTML-FromANSI-Tiny.git
+
+# AUTHOR
+
+Randy Stauner <rwstauner@cpan.org>
+
+# CONTRIBUTOR
+
+Stephen Thirlwall <sdt@cpan.org>
+
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Randy Stauner.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.

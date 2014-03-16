@@ -49,4 +49,33 @@ eq_or_diff
   q[hey <span class="t_on_white t_black">LOOK AT THIS</span>],
   'with auto_reverse get default colors';
 
+subtest remove_escape_sequences => sub {
+  my ($class, $version) = qw( Parse::ANSIColor::Tiny 0.500 );
+  eval "require $class; $class\->VERSION($version); 1" ## no critic (StringyEval)
+    or plan skip_all => "$class version $version required for remove_escapes";
+
+  # Tests taken from Taiki Kawakami's pull request.
+  # https://github.com/rwstauner/HTML-FromANSI-Tiny/pull/2/files
+  eq_or_diff
+    scalar $h->html("\e[2j\e[2Jfoo"),
+    q[foo],
+    'with escape sequence to clear screen';
+
+  eq_or_diff
+    scalar $h->html("\e[0k\e[0K\e[1k\e[1K\e[2k\e[2Kfoo"),
+    q[foo],
+    'with escape sequence to clear row';
+
+  eq_or_diff
+    scalar $h->html("\e[1;2h\e[10;20Hfoo"),
+    q[foo],
+    'with escape sequence to move cursor by lengthwise and crosswise';
+
+  eq_or_diff
+    scalar $h->html("\e[10a\e[10A\e[10b\e[10B\e[10c\e[10C\e[10d\e[10Dfoo"),
+    q[foo],
+    'with escape sequence to move cursor';
+
+};
+
 done_testing;

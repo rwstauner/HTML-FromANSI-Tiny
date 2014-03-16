@@ -29,7 +29,8 @@ Takes a hash or hash ref of options:
 
 For convenience and consistency options to L<Parse::ANSIColor::Tiny/new>
 can be specified directly including
-C<auto_reverse>, C<background>, and C<foreground>.
+C<auto_reverse>, C<background>, C<foreground>,
+and C<remove_escapes>.
 
 =cut
 
@@ -39,6 +40,8 @@ sub new {
     class_prefix => '',
     selector_prefix => '',
     tag => 'span',
+    # It seems particularly unlikely that somebody would want these in their HTML.
+    remove_escapes => 1,
     @_ == 1 ? %{ $_[0] } : @_,
   };
 
@@ -61,7 +64,11 @@ sub ansi_parser {
   my ($self) = @_;
   return $self->{ansi_parser} ||= do {
     # hash slice
-    my (@fields, %copy) = qw(auto_reverse foreground background);
+    my (@fields, %copy) = qw(
+      auto_reverse
+      foreground background
+      remove_escapes
+    );
     @copy{ @fields } = @$self{ @fields };
     Parse::ANSIColor::Tiny->new(%copy);
   };

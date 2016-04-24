@@ -18,34 +18,34 @@ is scalar @css, $exp_lines, 'got all styles';
 my $color = '[0-9a-fA-F]{3}';
 my @rgb;
 
-ok find_style(qr/.bold { font-weight: bold; }/), 'bold';
+ok find_style(qr/\.bold \{ font-weight: bold; \}/), 'bold';
 
-ok find_style(qr/.yellow { color: #($color); }/                    ), 'fg color';
+ok find_style(qr/\.yellow \{ color: #($color); \}/                    ), 'fg color';
 ok $rgb[0] == $rgb[1] && $rgb[0] >  $rgb[2], 'yellow';
 
-ok find_style(qr/.on_red { background-color: #($color); }/         ), 'bg color';
+ok find_style(qr/\.on_red \{ background-color: #($color); \}/         ), 'bg color';
 ok $rgb[0] >  $rgb[1] && $rgb[0] >  $rgb[2], 'red';
 
-ok find_style(qr/.bright_green { color: #($color); }/              ), 'bright fg color';
+ok find_style(qr/\.bright_green \{ color: #($color); \}/              ), 'bright fg color';
 ok $rgb[1] >  $rgb[0] && $rgb[1] >  $rgb[2], 'green';
 
 my @bg  = @rgb;
 
-ok find_style(qr/.on_bright_green { background-color: #($color); }/), 'bright bg color';
+ok find_style(qr/\.on_bright_green \{ background-color: #($color); \}/), 'bright bg color';
 ok $rgb[1] >  $rgb[0] && $rgb[1] >  $rgb[2], 'green';
 
 my @obg = @rgb;
 
 ok $obg[$_] == $bg[$_], 'same color' for 0 .. 2;
 
-ok find_style(qr/.on_green { background-color: #($color); }/       ), 'bg color';
+ok find_style(qr/\.on_green \{ background-color: #($color); \}/       ), 'bg color';
 ok $rgb[1] >  $rgb[0] && $rgb[1] >  $rgb[2], 'green';
 
 my @og = @rgb;
 
 ok $obg[$_] > $og[$_], 'brighter color' for 0 .. 2;
 
-my $under = 'underline { text-decoration: underline; }';
+my $under = quotemeta 'underline { text-decoration: underline; }';
 
 # no prefixes
 ok find_style(qr/^\.$under$/), 'underline';
@@ -102,9 +102,9 @@ $h = new_ok($mod, [styles => {
 }]);
 @css = $h->css;
 
-ok find_style(qr/^\.underline { color: yellow; }/), 'custom underline style';
-ok find_style(qr/^\.red { font-style: italic; }/ ), 'replace color';
-ok!find_style(qr/^\.red { color: #($color); }/   ), 'default color overwritten';
+ok find_style(qr/^\.underline \{ color: yellow; \}/), 'custom underline style';
+ok find_style(qr/^\.red \{ font-style: italic; \}/ ), 'replace color';
+ok!find_style(qr/^\.red \{ color: #($color); \}/   ), 'default color overwritten';
 
 $h = new_ok($mod, [
   styles => {
@@ -115,8 +115,8 @@ $h = new_ok($mod, [
 ]);
 @css = $h->css;
 
-ok find_style(qr/^#console \.term-red { color: crimson; }/ ), 'replace color';
-ok!find_style(qr/^#console \.term-red { color: #($color); }/   ), 'default color overwritten';
+ok find_style(qr/^#console \.term-red \{ color: crimson; \}/ ), 'replace color';
+ok!find_style(qr/^#console \.term-red \{ color: #($color); \}/   ), 'default color overwritten';
 
 done_testing;
 

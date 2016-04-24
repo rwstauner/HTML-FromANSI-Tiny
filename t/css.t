@@ -8,7 +8,14 @@ eval "require $mod" or die $@;
 my $h = new_ok($mod, []);
 
 my @css = $h->css;
-my @colors = do { no warnings 'once'; @HTML::FromANSI::Tiny::COLORS; };
+my @colors = do {
+  no warnings 'once';
+  my @c = (@HTML::FromANSI::Tiny::COLORS, @HTML::FromANSI::Tiny::COLORS256);
+  # In case older (pre-256-colors) Parse::ANSIColor::Tiny is installed.
+  my @available = $mod->new->ansi_parser->foreground_colors;
+  splice @c, scalar(@available);
+  @c; # return
+};
 
 # (fg + bg) + bold + dark + underline + concealed
 my $exp_lines = ((@colors * 2) + 1 + 1 + 1 + 1);

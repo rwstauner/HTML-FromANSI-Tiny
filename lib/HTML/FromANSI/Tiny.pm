@@ -11,6 +11,28 @@ qw(
   555  f66  6d6  dd6  99f  f6f  6dd  fff
 );
 
+# 256 palette.
+our @COLORS256 = (
+  # First 16 are the same.
+  @COLORS,
+  # rgbXYZ
+  do {
+    my @c;
+    for my $r ( 0 .. 5 ){
+      for my $g ( 0 .. 5 ){
+        for my $b ( 0 .. 5 ){
+          push @c, '#' . join('', map { sprintf '%02x', $_ * (255/5) } ($r, $g, $b));
+        }
+      }
+    }
+    @c; # return
+  },
+  # "nearly black to nearly white"
+  (map { '#' . join('', (sprintf '%02x', ($_ + 1) * 10) x 3) } (0 .. 23)),
+);
+
+our @ALLCOLORS = (@COLORS, @COLORS256);
+
 =method new
 
 Constructor.
@@ -143,11 +165,11 @@ sub _css_class_attr {
     {
       my $i = 0;
       foreach my $fg ( $parser->foreground_colors ){
-        $styles->{$fg} = { color => $COLORS[$i++] };
+        $styles->{$fg} = { color => $ALLCOLORS[$i++] };
       }
       $i = 0;
       foreach my $bg ( $parser->background_colors ){
-        $styles->{$bg} = { 'background-color' => $COLORS[$i++] };
+        $styles->{$bg} = { 'background-color' => $ALLCOLORS[$i++] };
       }
     }
 

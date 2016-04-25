@@ -3,6 +3,7 @@ Revision history for HTML-FromANSI-Tiny
 {{$NEXT}}
 
   - Add colors for 256 palette.
+    Bump prereq on Parse::ANSIColor::Tiny to get them.
 
 0.103     2014-03-16T01:56:14Z
 

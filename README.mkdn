@@ -1,10 +1,14 @@
+[![Build Status](https://travis-ci.org/rwstauner/HTML-FromANSI-Tiny.svg?branch=master)](https://travis-ci.org/rwstauner/HTML-FromANSI-Tiny)
+[![Coverage Status](https://coveralls.io/repos/rwstauner/HTML-FromANSI-Tiny/badge.svg?branch=master)](https://coveralls.io/r/rwstauner/HTML-FromANSI-Tiny?branch=master)
+[![Kwalitee status](http://cpants.cpanauthors.org/dist/HTML-FromANSI-Tiny.png)](http://cpants.charsbar.org/dist/overview/HTML-FromANSI-Tiny)
+
 # NAME
 
 HTML::FromANSI::Tiny - Easily convert colored command line output to HTML
 
 # VERSION
 
-version 0.103
+version 0.104
 
 # SYNOPSIS
 
@@ -95,7 +99,7 @@ terminal colors but also fairly legible on black or white.
 
 Overwrite style to taste.
 
-__Note__: There is no default style for `reverse`
+**Note**: There is no default style for `reverse`
 as CSS does not provide a simple mechanism for this.
 I suggest you use `auto_reverse`
 and set `background` and `foreground` to appropriate colors
@@ -225,7 +229,7 @@ in addition to those websites please use your favorite search engine to discover
 ## Bugs / Feature Requests
 
 Please report any bugs or feature requests by email to `bug-html-fromansi-tiny at rt.cpan.org`, or through
-the web interface at [http://rt.cpan.org/NoAuth/ReportBug.html?Queue=HTML-FromANSI-Tiny](http://rt.cpan.org/NoAuth/ReportBug.html?Queue=HTML-FromANSI-Tiny). You will be automatically notified of any
+the web interface at [https://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-FromANSI-Tiny](https://rt.cpan.org/Public/Bug/Report.html?Queue=HTML-FromANSI-Tiny). You will be automatically notified of any
 progress on the request by the system.
 
 ## Source Code
@@ -236,11 +240,11 @@ progress on the request by the system.
 
 # AUTHOR
 
-Randy Stauner <rwstauner@cpan.org>
+Randy Stauner &lt;rwstauner@cpan.org>
 
 # CONTRIBUTOR
 
-Stephen Thirlwall <sdt@cpan.org>
+Stephen Thirlwall &lt;sdt@cpan.org>
 
 # COPYRIGHT AND LICENSE
 

@@ -317,6 +317,7 @@ sub import {
 1;
 
 =for :stopwords html
+customizable
 
 =head1 SYNOPSIS
 

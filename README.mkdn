@@ -8,7 +8,7 @@ HTML::FromANSI::Tiny - Easily convert colored command line output to HTML
 
 # VERSION
 
-version 0.106
+version 0.107
 
 # SYNOPSIS
 
@@ -255,10 +255,9 @@ progress on the request by the system.
 
 Randy Stauner <rwstauner@cpan.org>
 
-# CONTRIBUTORS
+# CONTRIBUTOR
 
-- Randy Stauner <randy@r4s6.net>
-- Stephen Thirlwall <sdt@cpan.org>
+Stephen Thirlwall <sdt@cpan.org>
 
 # COPYRIGHT AND LICENSE
 

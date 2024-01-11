@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/rwstauner/HTML-FromANSI-Tiny.svg?branch=master)](https://travis-ci.org/rwstauner/HTML-FromANSI-Tiny)
 [![Coverage Status](https://coveralls.io/repos/rwstauner/HTML-FromANSI-Tiny/badge.svg?branch=master)](https://coveralls.io/r/rwstauner/HTML-FromANSI-Tiny?branch=master)
-[![Kwalitee status](http://cpants.cpanauthors.org/dist/HTML-FromANSI-Tiny.png)](http://cpants.charsbar.org/dist/overview/HTML-FromANSI-Tiny)
+[![Kwalitee status](https://cpants.cpanauthors.org/dist/HTML-FromANSI-Tiny.png)](https://cpants.cpanauthors.org/dist/HTML-FromANSI-Tiny)
 
 # NAME
 
@@ -8,7 +8,7 @@ HTML::FromANSI::Tiny - Easily convert colored command line output to HTML
 
 # VERSION
 
-version 0.105
+version 0.106
 
 # SYNOPSIS
 
@@ -32,10 +32,10 @@ Convert the output from a terminal command that is decorated
 with ANSI escape sequences into customizable HTML
 (with a small amount of code).
 
-This module complements [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+This module complements [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny)
 by providing a simple HTML markup around its output.
 
-[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) returns a data structure that's easy
+[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny) returns a data structure that's easy
 to reformat into any desired output.
 Reformatting to HTML seemed simple and common enough
 to warrant this module as well.
@@ -48,7 +48,7 @@ Constructor.
 
 Takes a hash or hash ref of options:
 
-- `ansi_parser` - Instance of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny); One will be created automatically, but you can provide one if you want to configure it.
+- `ansi_parser` - Instance of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny); One will be created automatically, but you can provide one if you want to configure it.
 - `class_prefix` - String to prefix class names; Blank by default for brevity. See ["html"](#html).
 - `html_encode` - Code ref that should encode HTML entities; See ["html\_encode"](#html_encode).
 - `inline_style` - Boolean to toggle using inline `style=""` attributes instead of `class=""` attributes.
@@ -57,15 +57,28 @@ Takes a hash or hash ref of options:
 - `styles` - Tree of hashrefs for customizing style output (for `<style>` tags or `inline_style`). See ["CUSTOM STYLES"](#custom-styles).
 - `tag` - Alternate tag in which to wrap the HTML; Defaults to `span`.
 
-For convenience and consistency options to ["new" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny#new)
+For convenience and consistency options to ["new" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny#new)
 can be specified directly including
 `auto_reverse`, `background`, `foreground`,
 and `remove_escapes`.
 
 ## ansi\_parser
 
-Returns the [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) instance in use.
+Returns the [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny) instance in use.
 Creates one if necessary.
+
+## attr\_to\_class
+
+Takes an ANSI attribute name such as 'red' or 'bold'
+and returns the corresponding class name.
+
+This allows subclasses to override the class names used.
+This can be useful for utilizing pre-existing CSS definitions
+(such as mapping `'red'` to `'text-danger'`).
+
+The default returns the string provided.
+
+    $hfat->attr_to_class('red'); # default returns 'red'
 
 ## css
 
@@ -104,7 +117,7 @@ as CSS does not provide a simple mechanism for this.
 I suggest you use `auto_reverse`
 and set `background` and `foreground` to appropriate colors
 if you expect to process `reverse` sequences.
-See ["process\_reverse" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny#process_reverse) for more information.
+See ["process\_reverse" in Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny#process_reverse) for more information.
 
 ## html
 
@@ -123,7 +136,7 @@ For example:
     qq[<bar class="baz-red baz-bold">foo</bar>]
 
 `$text` may be a string marked with ANSI escape sequences
-or the array ref output of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+or the array ref output of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny)
 if you already have that.
 
 In list context returns a list of HTML tags.
@@ -140,7 +153,7 @@ so it can be inserted into HTML tags.
 This is used internally by ["html"](#html) to encode
 the contents of each tag.
 
-By default the `encode_entities` function of [HTML::Entities](https://metacpan.org/pod/HTML::Entities) is used.
+By default the `encode_entities` function of [HTML::Entities](https://metacpan.org/pod/HTML%3A%3AEntities) is used.
 
 You may provide an alternate subroutine (code ref) to the constructor
 as the `html_encode` parameter in which case that sub will be used instead.
@@ -191,21 +204,21 @@ Any styles that are not overridden will get the defaults.
 
 # COMPARISON TO HTML::FromANSI
 
-[HTML::FromANSI](https://metacpan.org/pod/HTML::FromANSI) is a bit antiquated (as of v2.03 released in 2007).
+[HTML::FromANSI](https://metacpan.org/pod/HTML%3A%3AFromANSI) is a bit antiquated (as of v2.03 released in 2007).
 It uses `font` tags and the `style` attribute
 and isn't very customizable.
 
-It uses [Term::VT102](https://metacpan.org/pod/Term::VT102) which is probably more robust than
-[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny) but may be overkill for simple situations.
+It uses [Term::VT102](https://metacpan.org/pod/Term%3A%3AVT102) which is probably more robust than
+[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny) but may be overkill for simple situations.
 I've also had trouble installing it in the past.
 
-For many simple situations this module combined with [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
+For many simple situations this module combined with [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny)
 is likely sufficient and is considerably smaller.
 
 # SEE ALSO
 
-- [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse::ANSIColor::Tiny)
-- [HTML::FromANSI](https://metacpan.org/pod/HTML::FromANSI)
+- [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny)
+- [HTML::FromANSI](https://metacpan.org/pod/HTML%3A%3AFromANSI)
 
 # SUPPORT
 
@@ -224,7 +237,7 @@ in addition to those websites please use your favorite search engine to discover
 
     A modern, open-source CPAN search engine, useful to view POD in HTML format.
 
-    [http://metacpan.org/release/HTML-FromANSI-Tiny](http://metacpan.org/release/HTML-FromANSI-Tiny)
+    [https://metacpan.org/release/HTML-FromANSI-Tiny](https://metacpan.org/release/HTML-FromANSI-Tiny)
 
 ## Bugs / Feature Requests
 
@@ -242,9 +255,10 @@ progress on the request by the system.
 
 Randy Stauner <rwstauner@cpan.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
-Stephen Thirlwall <sdt@cpan.org>
+- Randy Stauner <randy@r4s6.net>
+- Stephen Thirlwall <sdt@cpan.org>
 
 # COPYRIGHT AND LICENSE
 

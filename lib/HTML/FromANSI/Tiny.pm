@@ -115,6 +115,27 @@ sub attr_to_class {
   $_[1];
 }
 
+=method attr_to_style
+
+Takes an ANSI attribute name such as 'red' or 'bold'
+and returns a hash ref of the CSS properties for it
+(as used by L</css> and C<inline_style>).
+
+  $hfat->attr_to_style('red'); # default returns { color => '#f33' }
+
+The C<styles> passed to the constructor take precedence,
+then the built-in defaults.
+
+Returns an empty hash ref for an attribute with no style,
+such as C<reverse>.
+
+=cut
+
+sub attr_to_style {
+  my ($self, $attr) = @_;
+  return $self->_css_class_attr->{ $attr } || {};
+}
+
 =method css
 
   my $css = $hfat->css();
@@ -167,7 +188,7 @@ sub css {
       sprintf "%s%s { %s }",
         ${prefix},
         $self->attr_to_class($_),
-        $self->_css_attr_string($styles->{$_})
+        $self->_css_attr_string($self->attr_to_style($_))
     }
       sort keys %$styles
   );
@@ -241,10 +262,7 @@ sub html {
   $text = $self->ansi_parser->parse($text)
     unless ref($text) eq 'ARRAY';
 
-  my $tag    = $self->{tag};
-  my $prefix = $self->{class_prefix};
-  # Preload if needed; Don't load if not.
-  my $styles = $self->{inline_style} ? $self->_css_class_attr : {};
+  my $tag = $self->{tag};
 
   local $_;
   my @html = map {
@@ -253,17 +271,33 @@ sub html {
 
     $self->{no_plain_tags} && !@$attr
       ? $h
-      : do {
-        sprintf q[<%s %s="%s">%s</%s>], $tag,
-          ($self->{inline_style}
-            ? (style => join ' ', map { $self->_css_attr_string($styles->{$_}) } @$attr)
-            : (class => join ' ', map { $prefix . $self->attr_to_class($_) } @$attr)
-          ), $h, $tag;
-      }
+      : sprintf q[<%s %s>%s</%s>],
+          $tag, $self->_tag_attributes($attr), $h, $tag;
 
   } @$text;
 
   return wantarray ? @html : join('', @html);
+}
+
+# Build the tag attributes for one run of text.  Note that the class path
+# never asks for the style table: building it isn't free, and it makes the
+# parser enumerate its colors.
+sub _tag_attributes {
+  my ($self, $attr) = @_;
+
+  if( $self->{inline_style} ){
+    my $style = $self->_style_string(map { $self->attr_to_style($_) } @$attr);
+    return sprintf q[style="%s"], $style;
+  }
+
+  my $prefix = $self->{class_prefix};
+  return sprintf q[class="%s"], join ' ',
+    map { $prefix . $self->attr_to_class($_) } @$attr;
+}
+
+sub _style_string {
+  my ($self, @styles) = @_;
+  return join ' ', grep { length } map { $self->_css_attr_string($_) } @styles;
 }
 
 =method html_encode

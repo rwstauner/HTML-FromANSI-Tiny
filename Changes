@@ -9,6 +9,8 @@ Revision history for HTML-FromANSI-Tiny
     generating classes.  Bumps the Parse::ANSIColor::Tiny prereq.
   - Add 'attr_to_style' method to allow subclasses to customize the CSS
     properties used for an attribute.
+  - Emit the properties of a style in sorted order, so that a 'styles'
+    entry with more than one CSS property is reproducible.
 
 0.107     2024-01-11T15:55:33Z
 

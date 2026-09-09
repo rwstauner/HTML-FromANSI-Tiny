@@ -244,7 +244,10 @@ sub _css_class_attr {
 
 sub _css_attr_string {
   my ($self, $attr) = @_;
-  return join ' ', map { "$_: $attr->{$_};" } keys %$attr;
+  # Sorted so that a style with more than one property is reproducible.
+  # It also happens to put a shorthand before the longhands it can be
+  # overridden by, since its name is a prefix of theirs.
+  return join ' ', map { "$_: $attr->{$_};" } sort keys %$attr;
 }
 
 =method html

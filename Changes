@@ -2,6 +2,8 @@ Revision history for HTML-FromANSI-Tiny
 
 {{$NEXT}}
 
+0.108     2026-09-14T15:01:12Z
+
   - Support 24-bit ("truecolor") SGR sequences (38;2;r;g;b and 48;2;r;g;b),
     which Parse::ANSIColor::Tiny identifies as 'r255g0b0' and 'on_r0g10b20'.
     Since there are sixteen million of them, css() can't define a class for

@@ -8,7 +8,7 @@ HTML::FromANSI::Tiny - Easily convert colored command line output to HTML
 
 # VERSION
 
-version 0.107
+version 0.108
 
 # SYNOPSIS
 
@@ -80,6 +80,22 @@ The default returns the string provided.
 
     $hfat->attr_to_class('red'); # default returns 'red'
 
+## attr\_to\_style
+
+Takes an ANSI attribute name such as 'red' or 'bold'
+and returns a hash ref of the CSS properties for it
+(as used by ["css"](#css) and `inline_style`).
+
+    $hfat->attr_to_style('red'); # default returns { color => '#f33' }
+
+The `styles` passed to the constructor take precedence,
+then the built-in defaults.
+The 24-bit colors are computed on demand,
+since there are far too many of them to keep in a table.
+
+Returns an empty hash ref for an attribute with no style,
+such as `reverse`.
+
 ## css
 
     my $css = $hfat->css();
@@ -138,6 +154,13 @@ For example:
 `$text` may be a string marked with ANSI escape sequences
 or the array ref output of [Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny)
 if you already have that.
+
+A 24-bit color also gets an inline `style=""` attribute,
+since ["css"](#css) cannot emit a rule for each of sixteen million colors:
+
+    qq[<span class="r255g0b0" style="color: #ff0000;">foo</span>]
+
+See ["24-BIT COLOR"](#24-bit-color).
 
 In list context returns a list of HTML tags.
 
@@ -202,6 +225,32 @@ pass to the constructor a tree of hashrefs as the `styles` attribute:
 
 Any styles that are not overridden will get the defaults.
 
+# 24-BIT COLOR
+
+Terminals that support 24-bit ("truecolor") sequences
+name a color outright rather than choosing from a palette:
+`38;2;_r_;_g_;_b_` for the foreground
+and `48;2;_r_;_g_;_b_` for the background.
+
+[Parse::ANSIColor::Tiny](https://metacpan.org/pod/Parse%3A%3AANSIColor%3A%3ATiny) identifies these as
+`r_R_g_G_b_B_` and `on_r_R_g_G_b_B_`,
+the names [Term::ANSIColor](https://metacpan.org/pod/Term%3A%3AANSIColor) uses for them,
+and this module turns those into CSS colors.
+
+Don't confuse them with the 256-color palette names,
+which look deceptively similar:
+`rgb515` is one of the 216 palette colors,
+while `r5g1b5` is very nearly black.
+
+Since there are sixteen million of these colors
+they can't be given class definitions ahead of time by ["css"](#css),
+so ["html"](#html) writes them into a `style=""` attribute
+even when it is generating classes.
+If you would rather it didn't,
+override ["attr\_to\_style"](#attr_to_style) in a subclass to return an empty hash ref for them
+(or provide a `styles` entry for the specific colors you care about,
+which will then get a class and a rule from ["css"](#css) like anything else).
+
 # COMPARISON TO HTML::FromANSI
 
 [HTML::FromANSI](https://metacpan.org/pod/HTML%3A%3AFromANSI) is a bit antiquated (as of v2.03 released in 2007).
@@ -255,9 +304,10 @@ progress on the request by the system.
 
 Randy Stauner <rwstauner@cpan.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
-Stephen Thirlwall <sdt@cpan.org>
+- Ricardo Signes <rjbs@semiotic.systems>
+- Stephen Thirlwall <sdt@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
